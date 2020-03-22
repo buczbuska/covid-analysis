@@ -36,9 +36,17 @@ Deaths=cleandata(Deaths_raw)
 Recoveries=cleandata(Recoveries_raw)
 
 # Log function
-x_data = np.arange(start=1, stop=20, step=1)
-y_data = np.array([ 1, 1, 5, 5, 11, 16, 22, 31, 49, 68,
-        103, 119, 177, 238, 251, 355, 425, 537, 634])
+dataset = "Confirmed"
+url = f"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-{dataset}.csv"
+df = pd.read_csv(url, error_bad_lines=False)
+dfPL = df.loc[df["Country/Region"]=="Poland"]
+dfPL2 = dfPL.drop(columns=["Province/State","Country/Region","Lat","Long"])
+PL_list = dfPL2.values.tolist()
+flat_list = [item for sublist in PL_list for item in sublist]
+readyPL = list(filter(lambda a: a != 0, flat_list))
+
+x_data = np.arange(start=1, stop=(len(readyPL)+1), step=1)
+y_data = np.array(readyPL)
 log_x_data = np.log(x_data)
 log_y_data = np.log(y_data)
 
@@ -57,8 +65,6 @@ y = 3.63824612 * np.exp(0.29429372*x_data)
 plt.plot(x_data, y_data, "o")
 plt.plot(x_data, y)
 
-y = 7.99301193 * np.exp(0.23240517*x_data)
+y = 6.58828455 * np.exp(0.24566981*x_data)
 plt.plot(x_data, y_data, "o")
 plt.plot(x_data, y)
-
-print(curve_fit4)
